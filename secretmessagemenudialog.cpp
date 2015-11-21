@@ -94,7 +94,7 @@ ribi::About ribi::sema::MenuDialog::GetAbout() const noexcept
     "Richel Bilderbeek",
     "SecretMessage",
     "tool to add secret messages to images",
-    "the 23rd of February 2014",
+    "November 21st of 2015",
     "2009-2015",
     "http://www.richelbilderbeek.nl/ToolSecretMessage.htm",
     GetVersion(),
@@ -123,26 +123,18 @@ ribi::Help ribi::sema::MenuDialog::GetHelp() const noexcept
   );
 }
 
-boost::shared_ptr<const ribi::Program> ribi::sema::MenuDialog::GetProgram() const noexcept
-{
-  boost::shared_ptr<const ribi::Program> p {
-    new ribi::ProgramSecretMessage
-  };
-  assert(p);
-  return p;
-}
-
 std::string ribi::sema::MenuDialog::GetVersion() const noexcept
 {
-  return "2.1";
+  return "3.0";
 }
 
 std::vector<std::string> ribi::sema::MenuDialog::GetVersionHistory() const noexcept
 {
   return {
     "2009-01-11: version 1.0: initial Windows-only version",
-    "2012-08-03: version 2.0: port to Qt Creator"
-    "2014-02-23: version 2.1: added command-line interface"
+    "2012-08-03: version 2.0: port to Qt Creator",
+    "2014-02-23: version 2.1: added command-line interface",
+    "2015-11-21: version 3.0: moved to own GitHub",
   };
 }
 
@@ -154,22 +146,26 @@ void ribi::sema::MenuDialog::Test() noexcept
     if (is_tested) return;
     is_tested = true;
   }
+  {
+    MainDialog();
+    FileIo();
+  }
   const TestTimer test_timer(__func__,__FILE__,1.0);
   const std::string source_file { fileio::FileIo().GetTempFileName(".png") };
   const std::string message_file { fileio::FileIo().GetTempFileName(".png") };
   const std::string target_file { fileio::FileIo().GetTempFileName(".png") };
   {
-    QFile qt_source_file(":/secretmessage/images/ToolSecretMessageWhite.png");
+    QFile qt_source_file(":/secretmessage/images/SecretMessageWhite.png");
     qt_source_file.copy(source_file.c_str());
   }
   {
-    QFile qt_message_file(":/secretmessage/images/ToolSecretMessageR.png");
+    QFile qt_message_file(":/secretmessage/images/SecretMessageR.png");
     qt_message_file.copy(message_file.c_str());
   }
   assert( fileio::FileIo().IsRegularFile(source_file));
   assert( fileio::FileIo().IsRegularFile(message_file));
   assert(!fileio::FileIo().IsRegularFile(target_file));
-  MenuDialog().Execute( { "ToolSecretMessage", "-s",source_file,"-m",message_file,"-r",target_file} );
+  MenuDialog().Execute( { "SecretMessage", "-s",source_file,"-m",message_file,"-r",target_file} );
   assert(fileio::FileIo().IsRegularFile(source_file));
   assert(fileio::FileIo().IsRegularFile(message_file));
   assert(fileio::FileIo().IsRegularFile( target_file));

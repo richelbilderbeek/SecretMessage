@@ -2,7 +2,7 @@
 #pragma GCC diagnostic ignored "-Weffc++"
 #pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
-#include "qtsecretmessageextractdialog2.h"
+#include "qtsecretmessageextractdialog.h"
 
 #include <cassert>
 #include <boost/shared_ptr.hpp>
@@ -11,22 +11,22 @@
 
 #include "secretmessagemaindialog.h"
 
-#include "ui_qtsecretmessageextractdialog2.h"
+#include "ui_qtsecretmessageextractdialog.h"
 #pragma GCC diagnostic pop
 
-ribi::sema::QtSecretMessageExtractDialog2::QtSecretMessageExtractDialog2(QWidget *parent)
+ribi::sema::QtExtractDialog::QtExtractDialog(QWidget *parent)
   : QtHideAndShowDialog(parent),
-    ui(new Ui::QtSecretMessageExtractDialog2)
+    ui(new Ui::QtSecretMessageExtractDialog)
 {
   ui->setupUi(this);
 }
 
-ribi::sema::QtSecretMessageExtractDialog2::~QtSecretMessageExtractDialog2() noexcept
+ribi::sema::QtExtractDialog::~QtExtractDialog() noexcept
 {
   delete ui;
 }
 
-void ribi::sema::QtSecretMessageExtractDialog2::on_button_load_clicked()
+void ribi::sema::QtExtractDialog::on_button_load_clicked()
 {
   const std::string filename
     = QFileDialog::getOpenFileName(

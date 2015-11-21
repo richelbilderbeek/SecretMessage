@@ -4,7 +4,7 @@
 #pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
 #include "qtaboutdialog.h"
 #include "qtsecretmessagecreatedialog.h"
-#include "qtsecretmessageextractdialog2.h"
+#include "qtsecretmessageextractdialog.h"
 #include "qtsecretmessagemenudialog.h"
 #include "secretmessagemenudialog.h"
 #include "testtimer.h"
@@ -47,7 +47,7 @@ void ribi::sema::QtMenuDialog::on_button_create_clicked()
 
 void ribi::sema::QtMenuDialog::on_button_extract_clicked()
 {
-  QtSecretMessageExtractDialog2 d;
+  QtExtractDialog d;
   this->ShowChild(&d);
 }
 

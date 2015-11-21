@@ -146,16 +146,19 @@ void ribi::sema::MainDialog::Test() noexcept
     if (is_tested) return;
     is_tested = true;
   }
+  {
+    FileIo();
+  }
   const TestTimer test_timer(__func__,__FILE__,1.0);
   const std::string source_file { fileio::FileIo().GetTempFileName(".png") };
   const std::string message_file { fileio::FileIo().GetTempFileName(".png") };
   //const std::string result_file { fileio::FileIo().GetTempFileName(".png") };
   {
-    QFile qt_source_file(":/secretmessage/images/ToolSecretMessageWhite.png");
+    QFile qt_source_file(":/secretmessage/images/SecretMessageWhite.png");
     qt_source_file.copy(source_file.c_str());
   }
   {
-    QFile qt_message_file(":/secretmessage/images/ToolSecretMessageR.png");
+    QFile qt_message_file(":/secretmessage/images/SecretMessageR.png");
     qt_message_file.copy(message_file.c_str());
   }
   assert(fileio::FileIo().IsRegularFile(source_file));
