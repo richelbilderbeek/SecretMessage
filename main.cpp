@@ -12,12 +12,11 @@
 
 #include "secretmessagemaindialog.h"
 #include "secretmessagemenudialog.h"
-#include "trace.h"
+
 #pragma GCC diagnostic pop
 
 int main(int argc, char* argv[])
 {
-  START_TRACE();
   const std::vector<std::string> args { ribi::MenuDialog::ConvertArguments(argc,argv) };
   return ribi::sema::MenuDialog().Execute(args);
 }

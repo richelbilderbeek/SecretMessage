@@ -7,10 +7,7 @@
 #pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #include <QFile>
 #include <QImage>
-
 #include "fileio.h"
-#include "trace.h"
-#include "testtimer.h"
 #pragma GCC diagnostic pop
 
 ribi::sema::MainDialog::MainDialog()
