@@ -16,7 +16,7 @@
 ribi::sema::MainDialog::MainDialog()
 {
   #ifndef NDEBUG
-  Test();
+  TestMainDialog();
   #endif
 }
 
@@ -32,9 +32,9 @@ const boost::shared_ptr<QImage> ribi::sema::MainDialog::CreateSecretMessageRed(
   const boost::shared_ptr<QImage> result {
     new QImage(width,height,QImage::Format_RGB32)
   };
-  assert(original!=0 && "Image is NULL");
-  assert(message!=0 && "Image is NULL");
-  assert(result!=0 && "Image is NULL");
+  assert(original);
+  assert(message);
+  assert(result);
   //Get the pixel offsets
   const int dx1 = (original->width()  - width ) / 2;
   const int dx2 = (message->width()   - width ) / 2;
@@ -139,17 +139,13 @@ bool ribi::sema::MainDialog::IsWhite(const QRgb& rgb) const noexcept
 }
 
 #ifndef NDEBUG
-void ribi::sema::MainDialog::Test() noexcept
+void ribi::sema::TestMainDialog() noexcept
 {
   {
     static bool is_tested{false};
     if (is_tested) return;
     is_tested = true;
   }
-  {
-    FileIo();
-  }
-  const TestTimer test_timer(__func__,__FILE__,1.0);
   const std::string source_file { fileio::FileIo().GetTempFileName(".png") };
   const std::string message_file { fileio::FileIo().GetTempFileName(".png") };
   //const std::string result_file { fileio::FileIo().GetTempFileName(".png") };

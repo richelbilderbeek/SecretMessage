@@ -29,10 +29,9 @@ struct MainDialog
 
 
   private:
-  #ifndef NDEBUG
-  static void Test() noexcept;
-  #endif
 };
+
+void TestMainDialog() noexcept;
 
 } //~namespace sema
 } //~namespace ribi
