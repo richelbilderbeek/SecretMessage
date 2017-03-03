@@ -33,3 +33,4 @@ ui_*
 *_plugin_import.cpp
 debug/
 release/
+*.pro.user
