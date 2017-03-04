@@ -13,7 +13,7 @@ namespace sema {
 
 class QtExtractDialog : public QtHideAndShowDialog
 {
-    Q_OBJECT
+  Q_OBJECT //!OCLINT
     
 public:
     explicit QtExtractDialog(QWidget *parent = 0);
