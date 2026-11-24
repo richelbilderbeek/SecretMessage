@@ -34,3 +34,5 @@ ui_*
 debug/
 release/
 *.pro.user
+
+site/
