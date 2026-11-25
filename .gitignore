@@ -38,3 +38,7 @@ release/
 site/
 docs/run/secretmessage.js
 docs/run/secretmessage.wasm
+
+wordlist.dic
+
+coverage/
