@@ -1,6 +1,7 @@
 # SecretMessage
 
-[Go to the nicely rendered website](https://richelbilderbeek.github.io/SecretMessage/).
+[Go to the nicely rendered
+website](https://richelbilderbeek.github.io/SecretMessage/).
 
 Branch|[![Travis CI logo](TravisCI.png)](https://travis-ci.org)|[![Codecov logo](Codecov.png)](https://www.codecov.io)
 ---|---|---
