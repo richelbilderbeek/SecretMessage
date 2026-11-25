@@ -42,3 +42,4 @@ docs/run/secretmessage.wasm
 wordlist.dic
 
 coverage/
+build_*/
