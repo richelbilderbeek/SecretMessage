@@ -36,3 +36,5 @@ release/
 *.pro.user
 
 site/
+docs/run/secretmessage.js
+docs/run/secretmessage.wasm

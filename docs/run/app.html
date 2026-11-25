@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SecretMessage</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; padding: 0.5rem; color: #222; }
+  fieldset { border: 1px solid #ccc; border-radius: 6px; margin-bottom: 1rem; }
+  legend { font-weight: bold; }
+  label { display: block; margin: 0.4rem 0; }
+  button { background: #f57c00; color: #fff; border: 0; border-radius: 4px; padding: 0.4rem 0.9rem; cursor: pointer; }
+  button:disabled { background: #bbb; cursor: default; }
+  .row { display: flex; flex-wrap: wrap; gap: 1rem; }
+  figure { margin: 0; }
+  figcaption { font-size: 0.85rem; color: #555; }
+  canvas { max-width: 280px; height: auto; border: 1px solid #ddd; image-rendering: pixelated; }
+  #status { font-size: 0.9rem; color: #555; }
+  a.download { display: inline-block; margin-top: 0.3rem; }
+</style>
+</head>
+<body>
+<p id="status">Loading WebAssembly module...</p>
+
+<fieldset>
+  <legend>Create a secret message</legend>
+  <label>Original image: <input type="file" id="create-original" accept="image/*"></label>
+  <label>Message image (white pixels become the message): <input type="file" id="create-message" accept="image/*"></label>
+  <button id="create-button" disabled>Create</button>
+  <div class="row">
+    <figure><canvas id="create-original-canvas" width="0" height="0"></canvas><figcaption>Original</figcaption></figure>
+    <figure><canvas id="create-message-canvas" width="0" height="0"></canvas><figcaption>Message</figcaption></figure>
+    <figure><canvas id="create-result-canvas" width="0" height="0"></canvas><figcaption>Result
+      <br><a class="download" id="create-download" download="secret_message.png" hidden>Download (PNG)</a></figcaption></figure>
+  </div>
+</fieldset>
+
+<fieldset>
+  <legend>Extract a secret message</legend>
+  <label>Image with secret message (must be lossless, e.g. PNG): <input type="file" id="extract-input" accept="image/*"></label>
+  <button id="extract-button" disabled>Extract</button>
+  <div class="row">
+    <figure><canvas id="extract-input-canvas" width="0" height="0"></canvas><figcaption>Input</figcaption></figure>
+    <figure><canvas id="extract-result-canvas" width="0" height="0"></canvas><figcaption>Extracted message
+      <br><a class="download" id="extract-download" download="extracted_message.png" hidden>Download (PNG)</a></figcaption></figure>
+  </div>
+</fieldset>
+
+<script src="secretmessage.js"></script>
+<script>
+"use strict";
+let Module = null;
+const images = { original: null, message: null, extract: null };
+
+function $(id) { return document.getElementById(id); }
+
+function loadImage(file, canvasId) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = $(canvasId);
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(img.src);
+      resolve(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    };
+    img.onerror = () => reject(new Error("Cannot read image " + file.name));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+function toHeap(imageData) {
+  const ptr = Module._malloc(imageData.data.length);
+  Module.HEAPU8.set(imageData.data, ptr);
+  return ptr;
+}
+
+function showResult(ptr, width, height, canvasId, linkId) {
+  const data = new Uint8ClampedArray(Module.HEAPU8.subarray(ptr, ptr + width * height * 4));
+  const canvas = $(canvasId);
+  canvas.width = width;
+  canvas.height = height;
+  canvas.getContext("2d").putImageData(new ImageData(data, width, height), 0, 0);
+  const link = $(linkId);
+  link.href = canvas.toDataURL("image/png");
+  link.hidden = false;
+}
+
+function updateButtons() {
+  $("create-button").disabled = !(Module && images.original && images.message);
+  $("extract-button").disabled = !(Module && images.extract);
+}
+
+function onFile(inputId, key, canvasId) {
+  $(inputId).addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    images[key] = null;
+    if (file) {
+      try { images[key] = await loadImage(file, canvasId); }
+      catch (err) { $("status").textContent = err.message; }
+    }
+    updateButtons();
+  });
+}
+
+onFile("create-original", "original", "create-original-canvas");
+onFile("create-message", "message", "create-message-canvas");
+onFile("extract-input", "extract", "extract-input-canvas");
+
+$("create-button").addEventListener("click", () => {
+  const o = images.original, m = images.message;
+  const w = Module._get_result_width(o.width, m.width);
+  const h = Module._get_result_height(o.height, m.height);
+  const po = toHeap(o), pm = toHeap(m), pr = Module._malloc(w * h * 4);
+  Module._create_secret_message(po, o.width, o.height, pm, m.width, m.height, pr);
+  showResult(pr, w, h, "create-result-canvas", "create-download");
+  Module._free(po); Module._free(pm); Module._free(pr);
+});
+
+$("extract-button").addEventListener("click", () => {
+  const im = images.extract;
+  const pi = toHeap(im), pr = Module._malloc(im.width * im.height * 4);
+  Module._extract_secret_message(pi, im.width, im.height, pr);
+  showResult(pr, im.width, im.height, "extract-result-canvas", "extract-download");
+  Module._free(pi); Module._free(pr);
+});
+
+if (typeof createSecretMessageModule === "undefined") {
+  $("status").textContent = "WebAssembly module not found. It is built by the CI script that deploys this website.";
+} else {
+  createSecretMessageModule().then((m) => {
+    Module = m;
+    $("status").textContent = "Ready. Select images to get started. All processing happens in your browser.";
+    updateButtons();
+  });
+}
+</script>
+</body>
+</html>

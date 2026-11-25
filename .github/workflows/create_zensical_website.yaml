@@ -9,6 +9,7 @@ on:
     paths:
       - .github/workflows/create_zensical_website.yaml
       - 'docs/**'
+      - 'wasm/**'
       - zensical.toml
 
 permissions:
@@ -25,6 +26,14 @@ jobs:
     steps:
       - uses: actions/configure-pages@v5
       - uses: actions/checkout@v5
+      - uses: mymindstorm/setup-emsdk@v14
+      - name: Build WebAssembly version
+        run: |
+          emcc -O2 wasm/secretmessage_wasm.cpp -o docs/run/secretmessage.js \
+            -s MODULARIZE=1 -s EXPORT_NAME=createSecretMessageModule \
+            -s ALLOW_MEMORY_GROWTH=1 \
+            -s EXPORTED_FUNCTIONS=_malloc,_free,_get_result_width,_get_result_height,_create_secret_message,_extract_secret_message \
+            -s EXPORTED_RUNTIME_METHODS=HEAPU8
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
