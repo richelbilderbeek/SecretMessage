@@ -1,11 +1,9 @@
 # SecretMessage
 
+[![Codecov](https://codecov.io/gh/richelbilderbeek/SecretMessage/branch/main/graph/badge.svg)](https://codecov.io/gh/richelbilderbeek/SecretMessage)
+
 [Go to the nicely rendered
 website](https://richelbilderbeek.github.io/SecretMessage/).
-
-Branch|[![Travis CI logo](TravisCI.png)](https://travis-ci.org)|[![Codecov logo](Codecov.png)](https://www.codecov.io)
----|---|---
-master|[![Build Status](https://travis-ci.org/richelbilderbeek/SecretMessage.svg?branch=master)](https://travis-ci.org/richelbilderbeek/SecretMessage)|[![codecov.io](https://codecov.io/github/richelbilderbeek/SecretMessage/coverage.svg?branch=master)](https://codecov.io/github/richelbilderbeek/SecretMessage/branch/master)
 
 Tool to put secret messages in images using C++ and Qt.
 

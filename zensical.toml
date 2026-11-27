@@ -2,7 +2,7 @@
 site_name = "SecretMessage"
 site_url = "https://richelbilderbeek.github.io/SecretMessage/"
 repo_url = "https://github.com/richelbilderbeek/SecretMessage"
-edit_uri = "blob/master/docs/"
+edit_uri = "blob/main/docs/"
 
 nav = [
   { "Start" = "README.md"},
